@@ -142,7 +142,7 @@
         <div class="formula-box">
             <strong>Fórmulas utilizadas:</strong><br>
             • Mortalidade Proporcional (%) = (Óbitos por causa / Total de óbitos) × 100<br>
-            • Taxa por 100.000 = (Óbitos por causa / População) × 100.000
+            • Taxa por 100.000 = (Óbitos por causa / Total de óbitos) × Taxa total
         </div>
         
         <div class="table-container">
@@ -207,18 +207,38 @@
         
         function calculateTable() {
             calculatedData = data.map(row => {
-                const mortPropH = (row.obitosH / totalObitosH * 100).toFixed(1);
-                const mortPropM = (row.obitosM / totalObitosM * 100).toFixed(1);
-                const taxaH = (row.obitosH / populacaoH * 100000).toFixed(1);
-                const taxaM = (row.obitosM / populacaoM * 100000).toFixed(1);
+                const mortPropH = (row.obitosH / totalObitosH * 100);
+                const mortPropM = (row.obitosM / totalObitosM * 100);
+                const taxaH = ((row.obitosH / totalObitosH) * 1023);
+                const taxaM = ((row.obitosM / totalObitosM) * 908);
                 
                 return {
                     ...row,
-                    mortPropH: parseFloat(mortPropH),
-                    mortPropM: parseFloat(mortPropM),
-                    taxaH: parseFloat(taxaH),
-                    taxaM: parseFloat(taxaM)
+                    mortPropH: mortPropH,
+                    mortPropM: mortPropM,
+                    taxaH: taxaH,
+                    taxaM: taxaM
                 };
+            });
+            
+            // Ajustar arredondamentos para somar exatamente 100%
+            let somaH = 0, somaM = 0;
+            
+            calculatedData.forEach((row, index) => {
+                if (index < calculatedData.length - 1) {
+                    row.mortPropH = parseFloat(row.mortPropH.toFixed(1));
+                    row.mortPropM = parseFloat(row.mortPropM.toFixed(1));
+                    row.taxaH = parseFloat(row.taxaH.toFixed(1));
+                    row.taxaM = parseFloat(row.taxaM.toFixed(1));
+                    somaH += row.mortPropH;
+                    somaM += row.mortPropM;
+                } else {
+                    // Último item: ajustar para somar 100%
+                    row.mortPropH = parseFloat((100 - somaH).toFixed(1));
+                    row.mortPropM = parseFloat((100 - somaM).toFixed(1));
+                    row.taxaH = parseFloat(row.taxaH.toFixed(1));
+                    row.taxaM = parseFloat(row.taxaM.toFixed(1));
+                }
             });
             
             renderTable();
@@ -274,12 +294,12 @@
                 <div class="formula-box">
                     <strong>Causa A - Homens:</strong><br>
                     • Mortalidade Proporcional = (${exemploA.obitosH} ÷ ${totalObitosH}) × 100 = ${exemploA.mortPropH}%<br>
-                    • Taxa por 100.000 = (${exemploA.obitosH} ÷ ${Math.round(populacaoH).toLocaleString()}) × 100.000 = ${exemploA.taxaH}
+                    • Taxa por 100.000 = (${exemploA.obitosH} ÷ ${totalObitosH}) × 1023 = ${exemploA.taxaH}
                 </div>
                 <div class="formula-box">
                     <strong>Causa A - Mulheres:</strong><br>
                     • Mortalidade Proporcional = (${exemploA.obitosM} ÷ ${totalObitosM}) × 100 = ${exemploA.mortPropM}%<br>
-                    • Taxa por 100.000 = (${exemploA.obitosM} ÷ ${Math.round(populacaoM).toLocaleString()}) × 100.000 = ${exemploA.taxaM}
+                    • Taxa por 100.000 = (${exemploA.obitosM} ÷ ${totalObitosM}) × 908 = ${exemploA.taxaM}
                 </div>
             `;
             
