@@ -199,8 +199,9 @@
         
         const totalObitosH = 30700;
         const totalObitosM = 29040;
-        const populacaoH = 1023 * 1000; // 1023 por 100.000 = população total
-        const populacaoM = 908 * 1000;  // 908 por 100.000 = população total
+        // Calculando população baseada na taxa total por 100.000
+        const populacaoH = (totalObitosH * 100000) / 1023; // População masculina
+        const populacaoM = (totalObitosM * 100000) / 908;  // População feminina
         
         let calculatedData = [];
         
@@ -273,12 +274,12 @@
                 <div class="formula-box">
                     <strong>Causa A - Homens:</strong><br>
                     • Mortalidade Proporcional = (${exemploA.obitosH} ÷ ${totalObitosH}) × 100 = ${exemploA.mortPropH}%<br>
-                    • Taxa por 100.000 = (${exemploA.obitosH} ÷ ${populacaoH.toLocaleString()}) × 100.000 = ${exemploA.taxaH}
+                    • Taxa por 100.000 = (${exemploA.obitosH} ÷ ${Math.round(populacaoH).toLocaleString()}) × 100.000 = ${exemploA.taxaH}
                 </div>
                 <div class="formula-box">
                     <strong>Causa A - Mulheres:</strong><br>
                     • Mortalidade Proporcional = (${exemploA.obitosM} ÷ ${totalObitosM}) × 100 = ${exemploA.mortPropM}%<br>
-                    • Taxa por 100.000 = (${exemploA.obitosM} ÷ ${populacaoM.toLocaleString()}) × 100.000 = ${exemploA.taxaM}
+                    • Taxa por 100.000 = (${exemploA.obitosM} ÷ ${Math.round(populacaoM).toLocaleString()}) × 100.000 = ${exemploA.taxaM}
                 </div>
             `;
             
